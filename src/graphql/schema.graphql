@@ -1,0 +1,175 @@
+"""
+Direct the client to resolve this field locally, either from the cache or local resolvers.
+"""
+directive @client(
+  """
+  When true, the client will never use the cache for this value. See
+  https://www.apollographql.com/docs/react/essentials/local-state/#forcing-resolvers-with-clientalways-true
+  """
+  always: Boolean
+) on FIELD | FRAGMENT_DEFINITION | INLINE_FRAGMENT
+
+"""
+Export this locally resolved field as a variable to be used in the remainder of this query. See
+https://www.apollographql.com/docs/react/essentials/local-state/#using-client-fields-as-variables
+"""
+directive @export(
+  """The variable name to export this field as."""
+  as: String!
+) on FIELD
+
+"""
+Specify a custom store key for this result. See
+https://www.apollographql.com/docs/react/advanced/caching/#the-connection-directive
+"""
+directive @connection(
+  """Specify the store key."""
+  key: String!
+
+  """
+  An array of query argument names to include in the generated custom store key.
+  """
+  filter: [String!]
+) on FIELD
+
+"""A Memo create"""
+input NewMemo {
+  taskId: Int!
+  userId: Int!
+  content: String!
+}
+
+type Milestone {
+  id: ID!
+  description: String!
+  confirmedAt: String!
+  project: Project!
+}
+
+type Mutation {
+  createProject(newProject: NewProject!): Project!
+  createUser(newUser: NewUser!): User!
+  createTask(newTask: NewTask!): [Task!]!
+  createMilestone(newMilestone: NewMilestone!): [Milestone!]!
+  deleteTask(taskPkey: Int!): [Task!]!
+  deleteMilestone(milestonePkey: Int!): [Milestone!]!
+  batchCreateUser(newUsers: [NewUser!]!): [User!]!
+  updateProject(id: Int!, updateProject: UpdateProject!): Project!
+  updateUser(id: Int!, updateUser: UpdateUser!): User!
+  updateTask(id: Int!, updateTask: UpdateTask!): Task!
+  updateMilestone(id: Int!, updateMilestone: UpdateMilestone!): Milestone!
+  createMemo(newMemo: NewMemo!): [Memo!]!
+  deleteMemo(id: Int!): [Memo!]!
+}
+
+type Task {
+  id: ID!
+  taskName: String!
+  startedAt: String!
+  endedAt: String!
+  progress: Int!
+  orderNumber: Float!
+  project: Project!
+  user: User!
+  memos: [Memo!]!
+}
+
+"""A Milestone create"""
+input NewMilestone {
+  projectId: Int!
+  confirmedAt: String!
+  description: String!
+}
+
+type Project {
+  id: ID!
+  title: String!
+  color: String!
+  isArchived: Boolean!
+  startedAt: String!
+  endedAt: String!
+  tasks(userId: Int): [Task!]!
+  milestones: [Milestone!]!
+}
+
+type Query {
+  apiVersion: String!
+
+  """プロジェクトすべてを取得するクエリ"""
+  allProjects: [Project!]!
+
+  """パラメータで与えられたIDのプロジェクトを取得するクエリ"""
+  findProject(id: Int!): Project!
+
+  """全ユーザーを取得するクエリ"""
+  allUsers: [User!]!
+
+  """プロジェクト内でユーザーに紐づくタスクを取得するクエリ"""
+  searchProjectTasks(projectId: Int!, userId: Int!): [Task!]!
+}
+
+"""A Milestone update"""
+input UpdateMilestone {
+  confirmedAt: String
+  description: String
+}
+
+"""A Task update"""
+input UpdateTask {
+  userId: Int
+  taskName: String
+  startedAt: String
+  endedAt: String
+  progress: Int
+  orderNumber: Float
+}
+
+"""A Task create"""
+input NewTask {
+  projectId: Int!
+  userId: Int!
+  taskName: String!
+  startedAt: String!
+  endedAt: String!
+  orderNumber: Float
+}
+
+"""A Project update"""
+input UpdateProject {
+  title: String
+  color: String
+  isArchived: Boolean
+  startedAt: String
+  endedAt: String
+}
+
+"""A User create"""
+input NewUser {
+  displayName: String!
+}
+
+type Memo {
+  id: ID!
+  content: String!
+}
+
+type User {
+  id: ID!
+  displayName: String!
+  isDisabled: Boolean!
+  tasks: [Task!]!
+}
+
+"""A User update"""
+input UpdateUser {
+  displayName: String
+  isDisabled: Boolean
+}
+
+"""A Project create"""
+input NewProject {
+  title: String!
+  color: String!
+  startedAt: String!
+  endedAt: String!
+}

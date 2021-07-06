@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  wbs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wbs
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./:/usr/src/app:delegated
+    environment:
+      - VUE_APP_APOLLO_ENGINE_SERVICE=graphql-sample-service
+      - VUE_APP_APOLLO_ENGINE_CLIENT=graphql-sample-client
+      - VUE_APP_APOLLO_ENGINE_KEY=""
+      - VUE_APP_GRAPHQL_HTTP=http://localhost:3000/graphql
+      - CHOKIDAR_USEPOLLING=true
+    command: tail -f /dev/null
+    networks:
+      - default
+      - wbs_network
+
+networks:
+  wbs_network:
+    external: true
