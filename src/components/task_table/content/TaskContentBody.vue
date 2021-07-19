@@ -3,19 +3,35 @@
     class="task__table--body-projects-container"
     @click="openTaskDialogEvent(false, n)"
   >
-    <div class="task__table--body-project-name">
-      {{ task.taskName }}
-      <v-icon
-        small
-        :color="task.memos.length > 0 ? 'blue darken-2' : 'darken-2'"
-        @click.stop="displayMemo"
-      >
-        mdi-message-text
-      </v-icon>
-    </div>
-    <div class="task__table--body-project-user">
-      {{ task.user.displayName }}
-    </div>
+    <v-tooltip top>
+      <template v-slot:activator="{ on }">
+        <div class="task__table--body-project-name" v-on="on">
+          <v-icon
+            small
+            :color="task.memos.length > 0 ? 'blue darken-2' : 'darken-2'"
+            @click.stop="displayMemo"
+          >
+            mdi-message-text
+          </v-icon>
+          <span>
+            {{ task.taskName }}
+          </span>
+        </div>
+      </template>
+      <span>
+        {{ task.taskName }}
+      </span>
+    </v-tooltip>
+    <v-tooltip top>
+      <template v-slot:activator="{ on }">
+        <div class="task__table--body-project-user" v-on="on">
+          {{ task.user.displayName }}
+        </div>
+      </template>
+      <span>
+        {{ task.user.displayName }}
+      </span>
+    </v-tooltip>
     <div class="task__table--body-project-start">
       {{ strToMoment(task.startedAt).format("MM/DD") }}
     </div>
