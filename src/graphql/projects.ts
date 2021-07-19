@@ -4,10 +4,12 @@ import gql from "graphql-tag";
 import { AllProjects } from "./types/allProjects";
 import { FindProject } from "./types/FindProject";
 import { reactive } from "@vue/composition-api";
+import { ArchivedProjects } from "./types/ArchivedProjects";
 
 export const CREATE_PROJECT = gql`
   mutation CreateProject($input: NewProject!) {
     createProject(newProject: $input) {
+      id
       title
       color
       startedAt
@@ -32,6 +34,18 @@ export const UPDATE_PROJECT = gql`
 export const ALL_PROJECT = gql`
   query AllProjects {
     allProjects {
+      id
+      title
+      color
+      startedAt
+      endedAt
+    }
+  }
+`;
+
+export const ARCHIVED_PROJECT = gql`
+  query ArchivedProjects {
+    archivedProjects {
       id
       title
       color
@@ -76,6 +90,9 @@ export const FIND_PROJECT = gql`
 `;
 
 export const allProjects = () => useQuery<AllProjects>(ALL_PROJECT);
+
+export const archivedProjects = () =>
+  useQuery<ArchivedProjects>(ARCHIVED_PROJECT);
 
 export const findProject = () => {
   const variables = reactive<{ id: number; userId: number | null }>({
