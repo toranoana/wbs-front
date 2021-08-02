@@ -60,6 +60,8 @@ type Mutation {
   updateMilestone(id: Int!, updateMilestone: UpdateMilestone!): Milestone!
   createMemo(newMemo: NewMemo!): [Memo!]!
   deleteMemo(id: Int!): [Memo!]!
+  createHoliday(newHoliday: NewHoliday!): Holiday!
+  deleteHoliday(id: Int!): [Holiday!]!
 }
 
 type Task {
@@ -106,12 +108,21 @@ type Query {
 
   """プロジェクト内でユーザーに紐づくタスクを取得するクエリ"""
   searchProjectTasks(projectId: Int!, userId: Int!): [Task!]!
+
+  """プロジェクトすべてを取得するクエリ"""
+  allHolidays: [Holiday!]!
 }
 
 """A Milestone update"""
 input UpdateMilestone {
   confirmedAt: String
   description: String
+}
+
+"""A Holiday create"""
+input NewHoliday {
+  holidayName: String!
+  targetAt: String!
 }
 
 """A Task update"""
@@ -122,6 +133,12 @@ input UpdateTask {
   endedAt: String
   progress: Int
   orderNumber: Float
+}
+
+type Holiday {
+  id: ID!
+  holidayName: String!
+  targetAt: String!
 }
 
 """A Task create"""
