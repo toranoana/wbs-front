@@ -590,7 +590,13 @@ export default defineComponent({
     const updateProjectCallback = async (project: Project) => {
       state.updateProject = projectToUpdateProject(project);
       await updateProjectMutation();
+      await props.projectsRefetch();
+      await props.archiveRefetch();
       state.projectDialog = false;
+      if (project.isArchived) {
+        // ホームに戻る
+        context.root.$router.replace("/");
+      }
     };
 
     const taskUpdateCallback = async (task: ProjectTask) => {

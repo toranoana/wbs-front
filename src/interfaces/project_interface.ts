@@ -8,5 +8,6 @@ export default interface Project {
   start: string;
   end: string;
   themeColor?: string;
+  isArchived?: boolean;
 }
 export type Projects = { [id: string]: Project };

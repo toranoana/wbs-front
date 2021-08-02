@@ -15,14 +15,18 @@ export interface TaskTableProps {
   projects: Projects;
   project: GraphqlProject;
   refetch: () => void;
+  archiveRefetch: () => Promise<void>;
   updateUserId: (userId: number | null) => void;
   selectUserId: number | null;
+  projectsRefetch: () => Promise<void>;
 }
 
 const taskTableInitProps = {
   projects: { ...objectDefaultTemplate },
   project: { ...objectDefaultTemplate },
   refetch: { ...functionDefaultTemplate },
+  archiveRefetch: { ...functionDefaultTemplate },
+  projectsRefetch: { ...functionDefaultTemplate },
   updateUserId: { ...functionDefaultTemplate },
   selectUserId: {
     type: [Number, null],

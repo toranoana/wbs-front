@@ -47,7 +47,7 @@ type Milestone {
 }
 
 type Mutation {
-  createProject(newProject: NewProject!): Project!
+  createProject(newProject: NewProject!): [Project!]!
   createUser(newUser: NewUser!): User!
   createTask(newTask: NewTask!): [Task!]!
   createMilestone(newMilestone: NewMilestone!): [Milestone!]!
@@ -99,6 +99,9 @@ type Query {
 
   """プロジェクトすべてを取得するクエリ"""
   allProjects: [Project!]!
+
+  """プロジェクトすべてを取得するクエリ"""
+  archivedProjects: [Project!]!
 
   """パラメータで与えられたIDのプロジェクトを取得するクエリ"""
   findProject(id: Int!): Project!
