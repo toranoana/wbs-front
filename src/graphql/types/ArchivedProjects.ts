@@ -3,13 +3,11 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { NewProject } from "./globalTypes";
-
 // ====================================================
-// GraphQL mutation operation: CreateProject
+// GraphQL query operation: ArchivedProjects
 // ====================================================
 
-export interface CreateProject_createProject {
+export interface ArchivedProjects_archivedProjects {
   __typename: "Project";
   id: string;
   title: string;
@@ -18,10 +16,9 @@ export interface CreateProject_createProject {
   endedAt: string;
 }
 
-export interface CreateProject {
-  createProject: CreateProject_createProject[];
-}
-
-export interface CreateProjectVariables {
-  input: NewProject;
+export interface ArchivedProjects {
+  /**
+   * プロジェクトすべてを取得するクエリ
+   */
+  archivedProjects: ArchivedProjects_archivedProjects[];
 }
