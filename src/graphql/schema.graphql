@@ -92,6 +92,7 @@ type Project {
   endedAt: String!
   tasks(userId: Int): [Task!]!
   milestones: [Milestone!]!
+  holidays: [Holiday!]!
 }
 
 type Query {

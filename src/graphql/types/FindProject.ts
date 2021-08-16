@@ -39,6 +39,13 @@ export interface FindProject_findProject_milestones {
   confirmedAt: string;
 }
 
+export interface FindProject_findProject_holidays {
+  __typename: "Holiday";
+  id: string;
+  holidayName: string;
+  targetAt: string;
+}
+
 export interface FindProject_findProject {
   __typename: "Project";
   id: string;
@@ -48,6 +55,7 @@ export interface FindProject_findProject {
   endedAt: string;
   tasks: FindProject_findProject_tasks[];
   milestones: FindProject_findProject_milestones[];
+  holidays: FindProject_findProject_holidays[];
 }
 
 export interface FindProject {

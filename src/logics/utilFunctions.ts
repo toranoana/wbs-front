@@ -1,20 +1,27 @@
 import { Moment } from "moment";
 import { Milestones } from "@/interfaces/milestone_interfaces";
+import { Holidays } from "@/interfaces/holiday_interfaces";
 
 export const isMilestone = (milestones: Milestones, day: Moment) =>
   milestones &&
   milestones[day.format("YYYY-MM-DD")]?.day.diff(day, "days") === 0;
+
+export const isHoliday = (holiday: Holidays, day: Moment) =>
+  holiday && holiday[day.format("YYYY-MM-DD")]?.day.diff(day, "days") === 0;
 
 export const isWeekEnd = (day: Moment) =>
   day.weekday() === 0 || day.weekday() === 6;
 
 export const cellColor = (
   date: Moment,
-  mileStones: Milestones
+  mileStones: Milestones,
+  holidays: Holidays
 ): string | null => {
   if (!date) return null;
   if (isMilestone(mileStones, date)) {
     return "#fff99e";
+  } else if (isHoliday(holidays, date)) {
+    return "#f5cece";
   } else if (isWeekEnd(date)) {
     return "#f0f0f0";
   } else {

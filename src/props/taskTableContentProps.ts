@@ -4,6 +4,7 @@ import {
   functionDefaultTemplate,
   numberDefaultTemplate,
   objectDefaultTemplate,
+  objectDefaultTemplateNullable,
   stringDefaultTemplate
 } from "@/props/templates";
 
@@ -27,6 +28,7 @@ const taskTableContentInitProps = {
   between: { ...arrayDefaultTemplate },
   milestones: { ...objectDefaultTemplate },
   isInazumaShow: { ...booleanDefaultTemplate },
-  refetch: { ...functionDefaultTemplate }
+  refetch: { ...functionDefaultTemplate },
+  holidays: { ...objectDefaultTemplateNullable }
 };
 export default taskTableContentInitProps;

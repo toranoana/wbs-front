@@ -7,6 +7,7 @@ import {
 const cellProps = {
   cellWidth: { ...numberDefaultTemplate },
   date: { ...objectDefaultTemplateNullable },
-  milestones: { ...objectDefaultTemplateNullable }
+  milestones: { ...objectDefaultTemplateNullable },
+  holidays: { ...objectDefaultTemplateNullable }
 };
 export default cellProps;
