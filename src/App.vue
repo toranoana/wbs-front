@@ -29,7 +29,13 @@
       </v-menu>
     </v-app-bar>
     <v-content>
-      <router-view v-if="projects" :projects="projects" />
+      <router-view
+        v-if="projects"
+        :projects="projects"
+        :archive-projects="archiveProjects"
+        :projects-refetch="refetch"
+        :archive-projects-refetch="archiveRefetch"
+      />
     </v-content>
   </v-app>
 </template>
@@ -37,14 +43,15 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted } from "@vue/composition-api";
 import { Projects } from "@/interfaces/project_interface";
-import { allProjects } from "./graphql/projects";
+import { allProjects, archivedProjects } from "./graphql/projects";
 import { useResult } from "@vue/apollo-composable";
-import { AllProjects_allProjects } from "./graphql/types/allProjects";
+import { AllProjects_allProjects } from "./graphql/types/AllProjects";
+import { ArchivedProjects_archivedProjects } from "@/graphql/types/ArchivedProjects";
 
 export default defineComponent({
   name: "App",
   setup() {
-    const { result, loading, error } = allProjects();
+    const { result, loading, error, refetch } = allProjects();
     const projects = useResult(result, null, data => {
       return data.allProjects.reduce(
         (acc: Projects, project: AllProjects_allProjects) => {
@@ -61,8 +68,31 @@ export default defineComponent({
       );
     });
 
+    const obj = archivedProjects();
+    const archiveProjects = useResult(obj.result, {}, data => {
+      return data.archivedProjects.reduce(
+        (acc: Projects, project: ArchivedProjects_archivedProjects) => {
+          acc[project.id.toString()] = {
+            id: project.id,
+            name: project.title,
+            start: project.startedAt,
+            end: project.endedAt,
+            themeColor: project.color
+          };
+          return acc;
+        },
+        {}
+      );
+    });
+    const archiveRefetch = async () => {
+      await obj.refetch();
+    };
+
     return {
-      projects
+      projects,
+      refetch,
+      archiveProjects,
+      archiveRefetch
     };
   }
 });

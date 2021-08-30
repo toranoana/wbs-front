@@ -109,6 +109,7 @@
             :cellWidth="cellWidth"
             :milestones="props.milestones"
             :key="`${idx}-${n}-gantt-cell`"
+            :holidays="props.holidays"
           />
         </template>
       </div>
@@ -136,6 +137,7 @@ import { useMutation } from "@vue/apollo-composable";
 import { UPDATE_TASK } from "@/graphql/tasks";
 import { FindProject_findProject_tasks_memos } from "@/graphql/types/FindProject";
 import TaskContentBody from "./TaskContentBody.vue";
+import { Holidays } from "@/interfaces/holiday_interfaces";
 
 interface Props {
   colHeaderWidth: number;
@@ -159,6 +161,7 @@ interface Props {
   scrollY: number;
   hoverRow: number;
   refetch: () => void;
+  holidays: Holidays;
 }
 
 interface State {

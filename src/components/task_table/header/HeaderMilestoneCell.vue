@@ -27,10 +27,12 @@ import cellProps from "@/props/cellProps";
 import { cellColor, isMilestone } from "@/logics/utilFunctions";
 import { functionDefaultTemplate } from "@/props/templates";
 import { Milestones } from "@/interfaces/milestone_interfaces";
+import { Holidays } from "@/interfaces/holiday_interfaces";
 
 interface Props {
   cellWidth: number;
   milestones: Milestones;
+  holidays: Holidays;
   date: Moment;
   openMileStoneDialogEvent: (isNew: boolean, day?: string) => void;
 }
@@ -43,7 +45,9 @@ export default defineComponent({
   },
   setup(props: Props) {
     // propsのgetCellColorとdateは一心同体で合わせて渡されるか渡されないかの二択
-    const color = computed(() => cellColor(props.date, props.milestones));
+    const color = computed(() =>
+      cellColor(props.date, props.milestones, props.holidays)
+    );
 
     const state = reactive({
       isMilestoneTooltipShow: false

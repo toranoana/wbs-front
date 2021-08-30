@@ -40,7 +40,7 @@
         </v-container>
       </v-card>
       <v-card
-        v-if="archiveProjects.length !== 0"
+        v-if="archiveProjects && archiveProjects.length !== 0"
         class="projects--container__archives"
       >
         <v-card-title>終了プロジェクト一覧</v-card-title>
@@ -49,7 +49,7 @@
             <v-col
               :to="{ name: 'Wbs', params: { id: project.id } }"
               :key="`archive-col-${project.id}`"
-              v-for="project in archiveProjects"
+              v-for="project in propsArchiveProjects"
               cols="12"
               sm="6"
               md="4"
@@ -62,7 +62,9 @@
                 max-width="300"
               >
                 <v-card-title>{{ project.name }}</v-card-title>
-                <v-card-text>end</v-card-text>
+                <v-card-text
+                  >{{ project.start }}〜{{ project.end }}</v-card-text
+                >
               </v-card>
             </v-col>
           </v-row>
@@ -82,10 +84,14 @@ import { computed, defineComponent, reactive } from "@vue/composition-api";
 import Project, { Projects } from "@/interfaces/project_interface";
 import projectsInitProps, { ProjectsProps } from "../props/projectsProps";
 import ProjectDialog from "@/components/dialogs/ProjectDialog.vue";
-import { CREATE_PROJECT } from "../graphql/projects";
-import { CreateProject } from "../graphql/types/CreateProject";
+import {
+  CREATE_PROJECT,
+  archivedProjects,
+  ALL_PROJECT
+} from "../graphql/projects";
 import { NewProject } from "../graphql/types/globalTypes";
-import { useResult, useMutation } from "@vue/apollo-composable";
+import { useMutation } from "@vue/apollo-composable";
+import { AllProjects } from "@/graphql/types/AllProjects";
 
 interface State {
   projectDialog: boolean;
@@ -100,8 +106,6 @@ export default defineComponent({
   },
   setup(props: ProjectsProps) {
     const propsProjects = computed(() => props.projects);
-    // TODO: アーカイブ済みプロジェクトを取得する
-    const archiveProjects: Project[] = [];
     const state = reactive<State>({
       projectDialog: false,
       newProject: null
@@ -110,7 +114,17 @@ export default defineComponent({
       state.projectDialog = false;
     };
     const { mutate: createProject } = useMutation(CREATE_PROJECT, () => ({
-      variables: { input: state.newProject }
+      variables: { input: state.newProject },
+      update: (cache, { data: { createProject } }) => {
+        // 結果としてproject_idに紐づくタスクが全部でてくるのでそれでキャッシュを更新
+        const data = cache.readQuery<AllProjects>({
+          query: ALL_PROJECT
+        });
+        if (!data) return;
+
+        data.allProjects = createProject;
+        cache.writeQuery({ query: ALL_PROJECT, data });
+      }
     }));
     const submitProjectDialogEvent = async (project: Project) => {
       state.newProject = {
@@ -122,10 +136,13 @@ export default defineComponent({
       await createProject();
       state.projectDialog = false;
     };
+
+    const propsArchiveProjects = computed(() => props.archiveProjects);
+
     return {
       state,
       propsProjects,
-      archiveProjects,
+      propsArchiveProjects,
       closeProjectDialogEvent,
       submitProjectDialogEvent,
       createProject

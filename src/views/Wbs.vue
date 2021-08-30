@@ -7,6 +7,8 @@
       :refetch="refetch"
       :update-user-id="updateUserId"
       :select-user-id="selectUserId"
+      :archive-refetch="archiveRefetch"
+      :projects-refetch="projectsRefetchFunc"
     />
   </div>
 </template>
@@ -49,10 +51,15 @@ export default defineComponent({
       variables.userId = userId;
     };
 
+    const archiveRefetch = async () => await props.archiveProjectsRefetch();
+    const projectsRefetchFunc = async () => await props.projectsRefetch();
+
     return {
       props,
       project,
       refetch,
+      archiveRefetch,
+      projectsRefetchFunc,
       updateUserId,
       selectUserId,
       variables

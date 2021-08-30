@@ -53,6 +53,7 @@ export const projectToUpdateProject = (project: Project): UpdateProject => {
     title: project.name,
     color: project.themeColor,
     startedAt: project.start,
-    endedAt: project.end
+    endedAt: project.end,
+    isArchived: project.isArchived
   };
 };

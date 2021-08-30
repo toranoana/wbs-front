@@ -16,11 +16,13 @@ import { Moment } from "moment";
 import cellProps from "@/props/cellProps";
 import { cellColor } from "@/logics/utilFunctions";
 import { Milestones } from "@/interfaces/milestone_interfaces";
+import { Holidays } from "@/interfaces/holiday_interfaces";
 
 interface Props {
   cellWidth: number;
   milestones: Milestones;
   date: Moment;
+  holidays: Holidays;
 }
 
 export default defineComponent({
@@ -28,7 +30,9 @@ export default defineComponent({
   props: cellProps,
   setup(props: Props) {
     // propsのgetCellColorとdateは一心同体で合わせて渡されるか渡されないかの二択
-    const color = computed(() => cellColor(props.date, props.milestones));
+    const color = computed(() =>
+      cellColor(props.date, props.milestones, props.holidays)
+    );
 
     return {
       color,

@@ -44,6 +44,7 @@
           <header-milestone-cell
             :cellWidth="props.cellWidth"
             :milestones="props.milestones"
+            :holidays="props.holidays"
             :date="date"
             :openMileStoneDialogEvent="props.openMileStoneDialogEvent"
             :key="idx"
@@ -60,6 +61,7 @@ import taskTableHeaderProps from "@/props/taskTableHeaderProps";
 import Cell from "@/components/task_table/common/Cell.vue";
 import HeaderMilestoneCell from "@/components/task_table/header/HeaderMilestoneCell.vue";
 import { Milestones } from "@/interfaces/milestone_interfaces";
+import { Holidays } from "@/interfaces/holiday_interfaces";
 
 interface Props {
   headerHeight: number;
@@ -76,6 +78,7 @@ interface Props {
   isMileStoneTooltipShow: boolean;
   openMileStoneDialogEvent: (isNew: boolean, day?: string) => void;
   scrollX: number;
+  holidays: Holidays;
 }
 
 export default defineComponent({

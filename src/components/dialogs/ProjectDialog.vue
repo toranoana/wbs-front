@@ -58,10 +58,7 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-btn
-          v-if="props.project"
-          color="error darken-1"
-          @click="$emit('delete')"
+        <v-btn v-if="props.project" color="error darken-1" @click="onDelete"
           >削除</v-btn
         >
         <v-spacer />
@@ -180,6 +177,26 @@ export default defineComponent({
       ctx.emit("submit", updateProject);
     };
 
+    const onDelete = async () => {
+      let start = "";
+      let end = "";
+      if (localState.dates.length === 2) {
+        start = localState.dates[0];
+        end = localState.dates[1];
+      } else {
+        // TODO: 更新失敗処理
+        return;
+      }
+      const updateProject: Project = {
+        name: localState.name,
+        start: start,
+        end: end,
+        themeColor: localState.themeColor,
+        isArchived: true
+      };
+      ctx.emit("submit", updateProject);
+    };
+
     /**
      * ダイアログが開かれたときに必要なローカルstateを初期化するメソッド
      */
@@ -206,6 +223,7 @@ export default defineComponent({
       dateRangeText,
       localState,
       onSubmit,
+      onDelete,
       swatches,
       props,
       dateRules
