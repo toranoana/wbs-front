@@ -8,6 +8,14 @@
 //==============================================================
 
 /**
+ * A Holiday create
+ */
+export interface NewHoliday {
+  holidayName: string;
+  targetAt: string;
+}
+
+/**
  * A Memo create
  */
 export interface NewMemo {

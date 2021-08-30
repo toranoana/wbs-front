@@ -89,11 +89,9 @@ import {
   archivedProjects,
   ALL_PROJECT
 } from "../graphql/projects";
-import { CreateProject } from "../graphql/types/CreateProject";
 import { NewProject } from "../graphql/types/globalTypes";
-import { useResult, useMutation } from "@vue/apollo-composable";
-import { ArchivedProjects_archivedProjects } from "@/graphql/types/ArchivedProjects";
-import { AllProjects } from "@/graphql/types/allProjects";
+import { useMutation } from "@vue/apollo-composable";
+import { AllProjects } from "@/graphql/types/AllProjects";
 
 interface State {
   projectDialog: boolean;

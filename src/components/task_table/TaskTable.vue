@@ -81,6 +81,7 @@
       :days="between"
       :milestones="milestones"
       :scrollX="state.scrollX"
+      :holidays="holidays"
     />
     <task-table-content
       :cellWidth="cellWidth"
@@ -104,6 +105,7 @@
       :scrollY="state.scrollY"
       :hexColor="themeColor"
       :refetch="onTaskOrderChange"
+      :holidays="holidays"
     />
     <task-dialog
       :task="state.isNewTask ? {} : tasks[state.selectedTaskIdx]"
@@ -167,7 +169,6 @@ import Project from "@/interfaces/project_interface";
 import taskTableInitProps, { TaskTableProps } from "@/props/taskTableProps";
 import ProjectDialog from "@/components/dialogs/ProjectDialog.vue";
 import TaskTableHeader from "@/components/task_table/header/TaskTableHeader.vue";
-import Cell from "@/components/task_table/common/Cell.vue";
 import TaskTableContent from "@/components/task_table/content/TaskTableContent.vue";
 import {
   endDate,
@@ -190,6 +191,7 @@ import { UPDATE_TASK, CREATE_TASK, DELETE_TASK } from "../../graphql/tasks";
 import { FindProject } from "../../graphql/types/FindProject";
 import { User } from "@/interfaces/user_interface";
 import { Milestone, Milestones } from "@/interfaces/milestone_interfaces";
+import { Holidays } from "@/interfaces/holiday_interfaces";
 import {
   milestoneToNewMilestone,
   milestoneToUpdateMilestone
@@ -235,8 +237,7 @@ export default defineComponent({
     MileStoneDialog,
     ProjectDialog,
     TaskTableHeader,
-    TaskTableContent,
-    Cell
+    TaskTableContent
   },
   props: taskTableInitProps,
   setup(props: TaskTableProps, context: SetupContext) {
@@ -671,6 +672,17 @@ export default defineComponent({
       { deep: true }
     );
 
+    const holidays = computed<Holidays>(() => {
+      return props.project.holidays.reduce<Holidays>((acc, current) => {
+        acc[current.targetAt] = {
+          id: current.id,
+          holidayName: current.holidayName,
+          day: moment(current.targetAt)
+        };
+        return acc;
+      }, {});
+    });
+
     return {
       state,
       nowLineLeft,
@@ -708,7 +720,8 @@ export default defineComponent({
       rowMouseLeaveEvent,
       openProjectDialogEvent,
       updateProjectCallback,
-      users
+      users,
+      holidays
     };
   }
 });

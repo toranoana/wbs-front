@@ -4,6 +4,7 @@ import {
   functionDefaultTemplate,
   numberDefaultTemplate,
   objectDefaultTemplate,
+  objectDefaultTemplateNullable,
   stringDefaultTemplate
 } from "@/props/templates";
 
@@ -20,6 +21,7 @@ const taskTableHeaderInitProps = {
   openMileStoneDialogEvent: { ...functionDefaultTemplate },
   milestones: { ...objectDefaultTemplate },
   months: { ...objectDefaultTemplate },
-  days: { ...arrayDefaultTemplate }
+  days: { ...arrayDefaultTemplate },
+  holidays: { ...objectDefaultTemplateNullable }
 };
 export default taskTableHeaderInitProps;
