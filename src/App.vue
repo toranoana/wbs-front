@@ -39,7 +39,7 @@ import { computed, defineComponent, onMounted } from "@vue/composition-api";
 import { Projects } from "@/interfaces/project_interface";
 import { allProjects } from "./graphql/projects";
 import { useResult } from "@vue/apollo-composable";
-import { AllProjects_allProjects } from "./graphql/types/allProjects";
+import { AllProjects_allProjects } from './graphql/types/AllProjects';
 
 export default defineComponent({
   name: "App",

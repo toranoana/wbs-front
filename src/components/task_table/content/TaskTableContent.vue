@@ -113,12 +113,19 @@
         </template>
       </div>
     </div>
+    <div class="task__table--body-scroll-area" :style="{ width: `${props.windowWidth}px` }">
+      <div class="task__table--body-scroll-content">
+        <div class="task__table--body-scroll-cell" ref="scrollXTarget" @scroll="xScrollEvent" :style="{ width: `${props.windowWidth}px` }">
+          <div class="task__table--body-scroll-dummy" :style="{ width: `${props.tableTotalWidth + 410}px` }" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script lang="ts">
 import {
   computed,
-  defineComponent,
+  defineComponent, onMounted,
   reactive,
   ref,
   watch
@@ -157,8 +164,10 @@ interface Props {
   calcTaskLength: (start: Moment, end: Moment) => number;
   scrollX: number;
   scrollY: number;
+  scrollXEvent: (e: {deltaX: number}) => void;
   hoverRow: number;
   refetch: () => void;
+  windowWidth: number;
 }
 
 interface State {
@@ -167,6 +176,7 @@ interface State {
   memos: FindProject_findProject_tasks_memos[];
   taskId: string;
   memosDialog: boolean;
+  xScrollAmount: number;
 }
 
 export default defineComponent({
@@ -183,10 +193,12 @@ export default defineComponent({
       dragTask: null,
       taskId: "-1",
       memos: [],
-      memosDialog: false
+      memosDialog: false,
+      xScrollAmount: 0
     });
     const bodyContentContainer = ref<HTMLDivElement>(null);
     const bodyContainer = ref<HTMLDivElement>(null);
+    const scrollXTarget = ref<HTMLDivElement>(null);
     const cellWidth = computedCellSize;
 
     const contentsTotalHeight = computed(
@@ -215,6 +227,15 @@ export default defineComponent({
     const strToMoment = (dataStr: string): Moment => {
       return moment(dataStr);
     };
+    const xScrollEvent = (e: Event) => {
+      console.log(e);
+
+      if (e.target && e.type === "scroll") {
+        const t = e.target as any;
+        props.scrollXEvent({deltaX: t.scrollLeft - state.xScrollAmount});
+        state.xScrollAmount = t.scrollLeft
+      }
+    }
 
     const { mutate: updateTaskOrderMutation } = useMutation(
       UPDATE_TASK,
@@ -269,6 +290,13 @@ export default defineComponent({
       props.refetch();
     };
 
+    onMounted(() => {
+      if (scrollXTarget.value != null) {
+        scrollXTarget.value?.addEventListener("scroll", xScrollEvent);
+      }
+
+    })
+
     return {
       state,
       props,
@@ -281,9 +309,11 @@ export default defineComponent({
       barColor,
       diffBarColor,
       bodyTasksTotalWidth,
+      scrollXTarget,
       strToMoment,
       onDragStart,
-      onDragEnd
+      onDragEnd,
+      xScrollEvent
     };
   }
 });
@@ -295,7 +325,20 @@ div.task__table {
     box-sizing: border-box;
     width: 100%;
     border-bottom: solid 1px $borderColor; // つけると最下部までスクロール後隙間ができる
-    overflow-y: hidden;
+    overflow: hidden;
+    &-scroll-area {
+      height: 17px;
+      position: relative;
+      box-sizing: border-box;
+    }
+    &-scroll-dummy {
+      height: 1px;
+    }
+
+    &-scroll-cell {
+      height: 17px;
+      overflow: auto;
+    }
 
     &-header,
     &-contents {

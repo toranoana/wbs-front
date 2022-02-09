@@ -1,7 +1,7 @@
 // graphqlテスト
 import { useQuery } from "@vue/apollo-composable";
 import gql from "graphql-tag";
-import { AllProjects } from "./types/allProjects";
+import { AllProjects } from "./types/AllProjects";
 import { FindProject } from "./types/FindProject";
 import { reactive } from "@vue/composition-api";
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="task__table" ref="topContainer" @wheel.prevent="wheelEvent">
+  <div class="task__table" ref="topContainer" @wheel.prevent="wheelEvent" @drag.prevent="dragEvent">
     <v-toolbar
       class="task__table--toolbar"
       dense
@@ -104,6 +104,8 @@
       :scrollY="state.scrollY"
       :hexColor="themeColor"
       :refetch="onTaskOrderChange"
+      :window-width="state.windowWidth"
+      :scroll-x-event="scrollXEvent"
     />
     <task-dialog
       :task="state.isNewTask ? {} : tasks[state.selectedTaskIdx]"
@@ -226,6 +228,7 @@ interface TaskTableState {
   updateMilestone: UpdateMilestone | null;
   newMilestone: NewMilestone | null;
   assignUser: User;
+  windowWidth: number;
 }
 
 export default defineComponent({
@@ -266,7 +269,8 @@ export default defineComponent({
       newTask: null,
       updateMilestone: null,
       newMilestone: null,
-      assignUser: { id: "", displayName: "" }
+      assignUser: { id: "", displayName: "" },
+      windowWidth: 0
     });
     const idParams = computed(() => context.root.$route.params.id);
     const cellWidth = computedCellSize;
@@ -307,6 +311,7 @@ export default defineComponent({
     const tableTotalWidth = computed(
       () => between.value.length * cellWidth.value
     );
+    const isShowScrollBar = computed(() => tableTotalWidth.value > state.bodyWidth);
     const projectName = computed(() => computedProject.value.name);
     const nowLineLeft = computed(() => {
       const now = moment();
@@ -474,16 +479,21 @@ export default defineComponent({
         48;
     };
 
+    const updateWindowWidth = () => {
+      state.windowWidth = topContainer.value!!.clientWidth;
+    }
+
     const resizeEvent = () => {
       calcBodyWidth();
       calcBodyHeight();
+      updateWindowWidth();
     };
 
-    const scrollXEvent = (e: WheelEvent) => {
+    const scrollXEvent = (e: {deltaX: number}) => {
       state.scrollX = e.deltaX;
     };
 
-    const scrollYEvent = (e: WheelEvent) => {
+    const scrollYEvent = (e: {deltaY: number}) => {
       state.scrollY = e.deltaY;
     };
 
@@ -495,6 +505,7 @@ export default defineComponent({
       state.hoverRow = -1;
     };
     onMounted(() => {
+      updateWindowWidth();
       calcBodyWidth();
       calcBodyHeight();
       window.addEventListener("resize", resizeEvent);
@@ -512,6 +523,13 @@ export default defineComponent({
       scrollXEvent(e);
       scrollYEvent(e);
     };
+
+    const dragEvent = (e: DragEvent) => {
+      const wrapperE = {deltaX: e.x, deltaY: e.y} as WheelEvent;
+      scrollXEvent(wrapperE);
+      scrollYEvent(wrapperE);
+    };
+
 
     const dragStartEvent = (e: DragEvent) => {
       const ghostElem = document.createElement("span");
@@ -683,7 +701,9 @@ export default defineComponent({
       tasks,
       milestones,
       isInazumaShow,
+      isShowScrollBar,
       wheelEvent,
+      dragEvent,
       colSliderDragEvent,
       dragStartEvent,
       dragEndEvent,
@@ -702,7 +722,9 @@ export default defineComponent({
       rowMouseLeaveEvent,
       openProjectDialogEvent,
       updateProjectCallback,
-      users
+      users,
+      scrollXEvent,
+      scrollYEvent
     };
   }
 });

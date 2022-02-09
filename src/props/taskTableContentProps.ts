@@ -23,10 +23,12 @@ const taskTableContentInitProps = {
   openTaskDialogEvent: { ...functionDefaultTemplate },
   calcTaskLineLeft: { ...functionDefaultTemplate },
   calcTaskLength: { ...functionDefaultTemplate },
+  scrollXEvent: { ...functionDefaultTemplate },
   tasks: { ...arrayDefaultTemplate },
   between: { ...arrayDefaultTemplate },
   milestones: { ...objectDefaultTemplate },
   isInazumaShow: { ...booleanDefaultTemplate },
-  refetch: { ...functionDefaultTemplate }
+  refetch: { ...functionDefaultTemplate },
+  windowWidth: { ...numberDefaultTemplate }
 };
 export default taskTableContentInitProps;
