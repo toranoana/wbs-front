@@ -106,6 +106,7 @@
       :hexColor="themeColor"
       :refetch="onTaskOrderChange"
       :holidays="holidays"
+      :nameWidth="state.taskNameWidth"
     />
     <task-dialog
       :task="state.isNewTask ? {} : tasks[state.selectedTaskIdx]"
@@ -228,6 +229,7 @@ interface TaskTableState {
   updateMilestone: UpdateMilestone | null;
   newMilestone: NewMilestone | null;
   assignUser: User;
+  taskNameWidth: number;
 }
 
 export default defineComponent({
@@ -267,7 +269,8 @@ export default defineComponent({
       newTask: null,
       updateMilestone: null,
       newMilestone: null,
-      assignUser: { id: "", displayName: "" }
+      assignUser: { id: "", displayName: "" },
+      taskNameWidth: 150
     });
     const idParams = computed(() => context.root.$route.params.id);
     const cellWidth = computedCellSize;

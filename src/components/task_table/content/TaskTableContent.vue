@@ -26,8 +26,24 @@
           :task="task"
           :n="n"
           :open-task-dialog-event="props.openTaskDialogEvent"
+          :nameWidth="nameWidth"
         />
       </div>
+      <div
+        @mousedown.stop.prevent="
+          () => {
+            state.isNameColResize = true;
+          }
+        "
+        @mouseup.stop.prevent="
+          () => {
+            state.isNameColResize = false;
+          }
+        "
+        @mousemove.stop.prevent="onNameColumnMove"
+        class="resize-dummy"
+        :style="{ left: (nameWidth || 150) - 2 + 'px' }"
+      ></div>
     </draggable>
     <div
       class="task__table--body-contents"
@@ -162,6 +178,7 @@ interface Props {
   hoverRow: number;
   refetch: () => void;
   holidays: Holidays;
+  nameWidth: number;
 }
 
 interface State {
@@ -170,6 +187,7 @@ interface State {
   memos: FindProject_findProject_tasks_memos[];
   taskId: string;
   memosDialog: boolean;
+  isNameColResize: boolean;
 }
 
 export default defineComponent({
@@ -186,7 +204,8 @@ export default defineComponent({
       dragTask: null,
       taskId: "-1",
       memos: [],
-      memosDialog: false
+      memosDialog: false,
+      isNameColResize: false
     });
     const bodyContentContainer = ref<HTMLDivElement>(null);
     const bodyContainer = ref<HTMLDivElement>(null);
@@ -228,6 +247,13 @@ export default defineComponent({
         }
       })
     );
+
+    const onNameColumnMove = (e: any) => {
+      e.stopProper;
+      if (state.isNameColResize) {
+        console.log(e);
+      }
+    };
 
     const onDragStart = (e: CustomEvent) => {
       state.dragId = computedTasks.value[(e as any).oldIndex].id;
@@ -286,7 +312,8 @@ export default defineComponent({
       bodyTasksTotalWidth,
       strToMoment,
       onDragStart,
-      onDragEnd
+      onDragEnd,
+      onNameColumnMove
     };
   }
 });
@@ -362,7 +389,7 @@ div.task__table {
       }
 
       &-name {
-        width: 150px;
+        // width: 150px;
       }
 
       &-user {
@@ -385,5 +412,12 @@ svg.gantt-line {
   display: inline-block;
   top: 50%;
   transform: translateY(-50%);
+}
+.resize-dummy {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  cursor: col-resize;
 }
 </style>
