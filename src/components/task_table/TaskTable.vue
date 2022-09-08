@@ -107,6 +107,8 @@
       :refetch="onTaskOrderChange"
       :holidays="holidays"
       :nameWidth="state.taskNameWidth"
+      :resizeNameWidth="resizeNameWidth"
+      :resizeColHeaderWidth="resizeColHeaderWidth"
     />
     <task-dialog
       :task="state.isNewTask ? {} : tasks[state.selectedTaskIdx]"
@@ -506,6 +508,13 @@ export default defineComponent({
         48;
     };
 
+    const resizeNameWidth = (newWidth: number) => {
+      state.taskNameWidth = newWidth;
+    };
+    const resizeColHeaderWidth = (newWidth: number) => {
+      state.colHeaderWidth = newWidth;
+    };
+
     const resizeEvent = () => {
       calcBodyWidth();
       calcBodyHeight();
@@ -752,7 +761,9 @@ export default defineComponent({
       openProjectDialogEvent,
       updateProjectCallback,
       users,
-      holidays
+      holidays,
+      resizeNameWidth,
+      resizeColHeaderWidth
     };
   }
 });

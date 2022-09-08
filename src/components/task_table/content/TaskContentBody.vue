@@ -1,6 +1,7 @@
 <template>
   <div
     class="task__table--body-projects-container"
+    :style="{ width: `${colHeaderWidth}px` }"
     @click="openTaskDialogEvent(false, n)"
   >
     <v-tooltip top>
@@ -78,6 +79,9 @@ export default defineComponent({
     openTaskDialogEvent: { ...functionDefaultTemplate },
     nameWidth: {
       type: Number
+    },
+    colHeaderWidth: {
+      type: Number
     }
   },
   components: {
@@ -119,7 +123,7 @@ div.task__table {
         display: inline-block;
         position: relative;
         overflow: hidden;
-        width: 410px; // TODO: 仮
+        // width: 410px; // TODO: 仮
         cursor: pointer;
       }
     }

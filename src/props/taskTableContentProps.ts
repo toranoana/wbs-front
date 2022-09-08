@@ -30,6 +30,8 @@ const taskTableContentInitProps = {
   isInazumaShow: { ...booleanDefaultTemplate },
   refetch: { ...functionDefaultTemplate },
   holidays: { ...objectDefaultTemplateNullable },
-  nameWidth: { ...numberDefaultTemplate }
+  nameWidth: { ...numberDefaultTemplate },
+  resizeNameWidth: { ...functionDefaultTemplate },
+  resizeColHeaderWidth: { ...functionDefaultTemplate }
 };
 export default taskTableContentInitProps;

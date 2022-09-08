@@ -27,6 +27,7 @@
           :n="n"
           :open-task-dialog-event="props.openTaskDialogEvent"
           :nameWidth="nameWidth"
+          :colHeaderWidth="colHeaderWidth"
         />
       </div>
       <div
@@ -42,7 +43,7 @@
         "
         @mousemove.stop.prevent="onNameColumnMove"
         class="resize-dummy"
-        :style="{ left: (nameWidth || 150) - 2 + 'px' }"
+        :style="resizeDummyStyle"
       ></div>
     </draggable>
     <div
@@ -179,6 +180,8 @@ interface Props {
   refetch: () => void;
   holidays: Holidays;
   nameWidth: number;
+  resizeNameWidth: (newWidth: number) => void;
+  resizeColHeaderWidth: (newWidth: number) => void;
 }
 
 interface State {
@@ -222,6 +225,18 @@ export default defineComponent({
       }
       return props.bodyWidth;
     });
+    const resizeDummyStyle = computed(() => {
+      if (state.isNameColResize) {
+        return {
+          left: 0,
+          width: "100%"
+        };
+      } else {
+        return {
+          left: (props.nameWidth || 150) - 2 + "px"
+        };
+      }
+    });
     // TODO: タスクが一個もないときとある時でスクロール量がずれる問題があるので注意
     watch(() => {
       bodyContentContainer.value!!.scrollBy(props.scrollX, 0);
@@ -248,10 +263,12 @@ export default defineComponent({
       })
     );
 
-    const onNameColumnMove = (e: any) => {
-      e.stopProper;
+    const onNameColumnMove = (e: MouseEvent) => {
       if (state.isNameColResize) {
         console.log(e);
+        console.log(e.movementX);
+        props.resizeNameWidth(props.nameWidth + e.movementX);
+        props.resizeColHeaderWidth(props.colHeaderWidth + e.movementX);
       }
     };
 
@@ -313,7 +330,8 @@ export default defineComponent({
       strToMoment,
       onDragStart,
       onDragEnd,
-      onNameColumnMove
+      onNameColumnMove,
+      resizeDummyStyle
     };
   }
 });
@@ -366,7 +384,6 @@ div.task__table {
         display: inline-block;
         position: relative;
         overflow: hidden;
-        width: 410px; // TODO: 仮
         cursor: pointer;
       }
     }
@@ -419,5 +436,7 @@ svg.gantt-line {
   height: 100%;
   width: 4px;
   cursor: col-resize;
+  background-color: red;
+  opacity: 0.8;
 }
 </style>
