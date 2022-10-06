@@ -146,7 +146,8 @@ div.task__table {
       }
 
       &-name {
-        // width: 150px;
+        text-align: left;
+        padding-left: 5px;
       }
 
       &-user {

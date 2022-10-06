@@ -41,6 +41,11 @@
             state.isNameColResize = false;
           }
         "
+        @mouseleave.stop.prevent="
+          () => {
+            state.isNameColResize = false;
+          }
+        "
         @mousemove.stop.prevent="onNameColumnMove"
         class="resize-dummy"
         :style="resizeDummyStyle"
@@ -219,6 +224,7 @@ export default defineComponent({
     );
     const computedTasks = computed(() => props.tasks);
     const bodyTasksTotalWidth = computed(() => {
+      console.log("resize");
       // 少なくとも全体の長さの二倍よりは大きくないと行けないので2で割った数より幅が狭かった場合は狭く
       if (props.tableTotalWidth < props.bodyWidth / 2) {
         return props.bodyWidth / 2 + 10;
@@ -265,8 +271,6 @@ export default defineComponent({
 
     const onNameColumnMove = (e: MouseEvent) => {
       if (state.isNameColResize) {
-        console.log(e);
-        console.log(e.movementX);
         props.resizeNameWidth(props.nameWidth + e.movementX);
         props.resizeColHeaderWidth(props.colHeaderWidth + e.movementX);
       }
@@ -406,7 +410,7 @@ div.task__table {
       }
 
       &-name {
-        // width: 150px;
+        text-align: left;
       }
 
       &-user {
@@ -436,7 +440,6 @@ svg.gantt-line {
   height: 100%;
   width: 4px;
   cursor: col-resize;
-  background-color: red;
   opacity: 0.8;
 }
 </style>

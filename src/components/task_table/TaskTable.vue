@@ -513,6 +513,7 @@ export default defineComponent({
     };
     const resizeColHeaderWidth = (newWidth: number) => {
       state.colHeaderWidth = newWidth;
+      calcBodyWidth();
     };
 
     const resizeEvent = () => {
