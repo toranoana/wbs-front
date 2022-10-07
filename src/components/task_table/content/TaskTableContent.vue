@@ -26,8 +26,30 @@
           :task="task"
           :n="n"
           :open-task-dialog-event="props.openTaskDialogEvent"
+          :nameWidth="nameWidth"
+          :colHeaderWidth="colHeaderWidth"
         />
       </div>
+      <div
+        @mousedown.stop.prevent="
+          () => {
+            state.isNameColResize = true;
+          }
+        "
+        @mouseup.stop.prevent="
+          () => {
+            state.isNameColResize = false;
+          }
+        "
+        @mouseleave.stop.prevent="
+          () => {
+            state.isNameColResize = false;
+          }
+        "
+        @mousemove.stop.prevent="onNameColumnMove"
+        class="resize-dummy"
+        :style="resizeDummyStyle"
+      ></div>
     </draggable>
     <div
       class="task__table--body-contents"
@@ -162,6 +184,9 @@ interface Props {
   hoverRow: number;
   refetch: () => void;
   holidays: Holidays;
+  nameWidth: number;
+  resizeNameWidth: (newWidth: number) => void;
+  resizeColHeaderWidth: (newWidth: number) => void;
 }
 
 interface State {
@@ -170,6 +195,7 @@ interface State {
   memos: FindProject_findProject_tasks_memos[];
   taskId: string;
   memosDialog: boolean;
+  isNameColResize: boolean;
 }
 
 export default defineComponent({
@@ -186,7 +212,8 @@ export default defineComponent({
       dragTask: null,
       taskId: "-1",
       memos: [],
-      memosDialog: false
+      memosDialog: false,
+      isNameColResize: false
     });
     const bodyContentContainer = ref<HTMLDivElement>(null);
     const bodyContainer = ref<HTMLDivElement>(null);
@@ -197,11 +224,24 @@ export default defineComponent({
     );
     const computedTasks = computed(() => props.tasks);
     const bodyTasksTotalWidth = computed(() => {
+      console.log("resize");
       // 少なくとも全体の長さの二倍よりは大きくないと行けないので2で割った数より幅が狭かった場合は狭く
       if (props.tableTotalWidth < props.bodyWidth / 2) {
         return props.bodyWidth / 2 + 10;
       }
       return props.bodyWidth;
+    });
+    const resizeDummyStyle = computed(() => {
+      if (state.isNameColResize) {
+        return {
+          left: 0,
+          width: "100%"
+        };
+      } else {
+        return {
+          left: (props.nameWidth || 150) - 2 + "px"
+        };
+      }
     });
     // TODO: タスクが一個もないときとある時でスクロール量がずれる問題があるので注意
     watch(() => {
@@ -228,6 +268,13 @@ export default defineComponent({
         }
       })
     );
+
+    const onNameColumnMove = (e: MouseEvent) => {
+      if (state.isNameColResize) {
+        props.resizeNameWidth(props.nameWidth + e.movementX);
+        props.resizeColHeaderWidth(props.colHeaderWidth + e.movementX);
+      }
+    };
 
     const onDragStart = (e: CustomEvent) => {
       state.dragId = computedTasks.value[(e as any).oldIndex].id;
@@ -286,7 +333,9 @@ export default defineComponent({
       bodyTasksTotalWidth,
       strToMoment,
       onDragStart,
-      onDragEnd
+      onDragEnd,
+      onNameColumnMove,
+      resizeDummyStyle
     };
   }
 });
@@ -339,7 +388,6 @@ div.task__table {
         display: inline-block;
         position: relative;
         overflow: hidden;
-        width: 410px; // TODO: 仮
         cursor: pointer;
       }
     }
@@ -362,7 +410,7 @@ div.task__table {
       }
 
       &-name {
-        width: 150px;
+        text-align: left;
       }
 
       &-user {
@@ -385,5 +433,13 @@ svg.gantt-line {
   display: inline-block;
   top: 50%;
   transform: translateY(-50%);
+}
+.resize-dummy {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  cursor: col-resize;
+  opacity: 0.8;
 }
 </style>

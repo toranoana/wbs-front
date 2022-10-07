@@ -29,6 +29,9 @@ const taskTableContentInitProps = {
   milestones: { ...objectDefaultTemplate },
   isInazumaShow: { ...booleanDefaultTemplate },
   refetch: { ...functionDefaultTemplate },
-  holidays: { ...objectDefaultTemplateNullable }
+  holidays: { ...objectDefaultTemplateNullable },
+  nameWidth: { ...numberDefaultTemplate },
+  resizeNameWidth: { ...functionDefaultTemplate },
+  resizeColHeaderWidth: { ...functionDefaultTemplate }
 };
 export default taskTableContentInitProps;
