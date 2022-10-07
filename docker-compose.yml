@@ -10,6 +10,7 @@ services:
       - '8080:8080'
     volumes:
       - ./:/usr/src/app:delegated
+      - /usr/src/app/node_modules
     environment:
       - VUE_APP_APOLLO_ENGINE_SERVICE=graphql-sample-service
       - VUE_APP_APOLLO_ENGINE_CLIENT=graphql-sample-client

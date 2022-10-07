@@ -1,11 +1,16 @@
 <template>
   <div
     class="task__table--body-projects-container"
+    :style="{ width: `${colHeaderWidth}px` }"
     @click="openTaskDialogEvent(false, n)"
   >
     <v-tooltip top>
       <template v-slot:activator="{ on }">
-        <div class="task__table--body-project-name" v-on="on">
+        <div
+          class="task__table--body-project-name"
+          :style="{ width: nameWidth + 'px' }"
+          v-on="on"
+        >
           <v-icon
             small
             :color="task.memos.length > 0 ? 'blue darken-2' : 'darken-2'"
@@ -71,7 +76,13 @@ export default defineComponent({
       type: Number
     },
     task: { ...objectDefaultTemplateNullable },
-    openTaskDialogEvent: { ...functionDefaultTemplate }
+    openTaskDialogEvent: { ...functionDefaultTemplate },
+    nameWidth: {
+      type: Number
+    },
+    colHeaderWidth: {
+      type: Number
+    }
   },
   components: {
     MemoDialog
@@ -112,7 +123,7 @@ div.task__table {
         display: inline-block;
         position: relative;
         overflow: hidden;
-        width: 410px; // TODO: 仮
+        // width: 410px; // TODO: 仮
         cursor: pointer;
       }
     }
@@ -135,7 +146,8 @@ div.task__table {
       }
 
       &-name {
-        width: 150px;
+        text-align: left;
+        padding-left: 5px;
       }
 
       &-user {

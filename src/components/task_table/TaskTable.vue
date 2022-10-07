@@ -106,6 +106,9 @@
       :hexColor="themeColor"
       :refetch="onTaskOrderChange"
       :holidays="holidays"
+      :nameWidth="state.taskNameWidth"
+      :resizeNameWidth="resizeNameWidth"
+      :resizeColHeaderWidth="resizeColHeaderWidth"
     />
     <task-dialog
       :task="state.isNewTask ? {} : tasks[state.selectedTaskIdx]"
@@ -228,6 +231,7 @@ interface TaskTableState {
   updateMilestone: UpdateMilestone | null;
   newMilestone: NewMilestone | null;
   assignUser: User;
+  taskNameWidth: number;
 }
 
 export default defineComponent({
@@ -267,7 +271,8 @@ export default defineComponent({
       newTask: null,
       updateMilestone: null,
       newMilestone: null,
-      assignUser: { id: "", displayName: "" }
+      assignUser: { id: "", displayName: "" },
+      taskNameWidth: 150
     });
     const idParams = computed(() => context.root.$route.params.id);
     const cellWidth = computedCellSize;
@@ -399,7 +404,7 @@ export default defineComponent({
       variables: { input: state.newTask },
       update: (cache, { data: { createTask } }) => {
         // 結果としてproject_idに紐づくタスクが全部でてくるのでそれでキャッシュを更新
-        const data = cache.readQuery<FindProject>({
+        let data = cache.readQuery<FindProject>({
           query: FIND_PROJECT,
           variables: {
             id: parseInt(idParams.value),
@@ -407,8 +412,22 @@ export default defineComponent({
           }
         });
         if (!data) return;
-        data.findProject.tasks = createTask;
-        cache.writeQuery({ query: FIND_PROJECT, data });
+
+        data = {
+          ...data,
+          findProject: {
+            ...data.findProject,
+            tasks: createTask
+          }
+        };
+        cache.writeQuery({
+          query: FIND_PROJECT,
+          data,
+          variables: {
+            id: parseInt(idParams.value),
+            userId: props.selectUserId
+          }
+        });
       }
     }));
 
@@ -424,7 +443,11 @@ export default defineComponent({
           });
           if (!data) return;
           data.findProject.milestones = createMilestone;
-          cache.writeQuery({ query: FIND_PROJECT, data });
+          cache.writeQuery({
+            query: FIND_PROJECT,
+            data,
+            variables: { id: parseInt(idParams.value) }
+          });
         }
       })
     );
@@ -435,11 +458,21 @@ export default defineComponent({
         // 結果としてproject_idに紐づくタスクが全部でてくるのでそれでキャッシュを更新
         const data = cache.readQuery<FindProject>({
           query: FIND_PROJECT,
-          variables: { id: parseInt(idParams.value) }
+          variables: {
+            id: parseInt(idParams.value),
+            userId: props.selectUserId
+          }
         });
         if (!data) return;
         data.findProject.tasks = deleteTask;
-        cache.writeQuery({ query: FIND_PROJECT, data });
+        cache.writeQuery({
+          query: FIND_PROJECT,
+          data,
+          variables: {
+            id: parseInt(idParams.value),
+            userId: props.selectUserId
+          }
+        });
       }
     }));
 
@@ -473,6 +506,14 @@ export default defineComponent({
         rowHeaderHeight.value -
         36 -
         48;
+    };
+
+    const resizeNameWidth = (newWidth: number) => {
+      state.taskNameWidth = newWidth;
+    };
+    const resizeColHeaderWidth = (newWidth: number) => {
+      state.colHeaderWidth = newWidth;
+      calcBodyWidth();
     };
 
     const resizeEvent = () => {
@@ -721,7 +762,9 @@ export default defineComponent({
       openProjectDialogEvent,
       updateProjectCallback,
       users,
-      holidays
+      holidays,
+      resizeNameWidth,
+      resizeColHeaderWidth
     };
   }
 });
